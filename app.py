@@ -7,7 +7,7 @@ import json
 
 # Configure Streamlit page
 st.set_page_config(
-    page_title="Licensing & Subscription Demo",
+    page_title="SAP Migration Suite - Licensing",
     page_icon="🔐",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -30,16 +30,18 @@ if 'licensing_state' not in st.session_state:
         'subscription_tier': 'Enterprise Plus',
         'monthly_cost': 2450.00,
         'auto_renewal': True,
+        # Only include features relevant to the actual SAP migration tools
         'features_enabled': [
-            'Foundation Data Processing',
-            'Employee Data Management', 
-            'Payroll Data Processing',
-            'Advanced Analytics',
-            'Custom Reports',
+            'HRP1000/HRP1001 Processing (Foundation)',
+            'PA0001/PA0002/PA0006/PA0105 Processing (Employee)',
+            'PA0008/PA0014 Processing (Payroll)',
+            'Advanced Data Validation',
+            'Migration Analytics',
+            'Custom Report Generation',
             'API Access',
             'Priority Support',
             'Audit Trail',
-            'Encrypted Packaging',
+            'Encrypted Package Export',
             'Multi-tenant Support'
         ]
     }
@@ -47,17 +49,17 @@ if 'licensing_state' not in st.session_state:
 def show_main_page():
     """Show the main landing page"""
     
-    # Header
+    # Header - simplified, professional
     st.markdown("""
     <div style="background: linear-gradient(90deg, #1e3d59 0%, #2e5984 100%); padding: 2rem; border-radius: 10px; margin-bottom: 2rem;">
-        <h1 style="color: white; margin: 0; text-align: center;">🔐 Licensing & Subscription Management</h1>
+        <h1 style="color: white; margin: 0; text-align: center;">SAP Migration Suite - Enterprise Licensing</h1>
         <p style="color: #e0e8f0; text-align: center; margin: 0.5rem 0 0 0;">
-            Enterprise-grade licensing, packaging, and subscription management platform
+            Licensing, packaging, and subscription management for SAP HCM to SuccessFactors migration
         </p>
     </div>
     """, unsafe_allow_html=True)
     
-    # Quick overview cards
+    # Current license status - relevant metrics
     licensing_state = st.session_state.licensing_state
     
     col1, col2, col3, col4 = st.columns(4)
@@ -65,13 +67,13 @@ def show_main_page():
     with col1:
         st.metric(
             "License Status", 
-            "✅ Active" if licensing_state['license_valid'] else "❌ Expired",
+            "Active" if licensing_state['license_valid'] else "Expired",
             help=f"Valid until {licensing_state['license_expiry']}"
         )
     
     with col2:
         st.metric(
-            "Subscription Tier", 
+            "Subscription", 
             licensing_state['subscription_tier'],
             help="Current subscription level"
         )
@@ -79,113 +81,110 @@ def show_main_page():
     with col3:
         usage_pct = (licensing_state['used_credits'] / licensing_state['monthly_credits']) * 100
         st.metric(
-            "Credit Usage", 
-            f"{usage_pct:.1f}%",
+            "Processing Credits", 
+            f"{usage_pct:.1f}% used",
             f"{licensing_state['used_credits']:,}/{licensing_state['monthly_credits']:,}"
         )
     
     with col4:
         st.metric(
-            "Active Users", 
+            "Licensed Users", 
             f"{licensing_state['current_users']}/{licensing_state['max_users']}",
-            help="Current vs maximum licensed users"
+            help="Active vs maximum users"
         )
     
     st.markdown("---")
     
-    # Main navigation buttons
-    st.markdown("### Choose Management Area")
+    # Main navigation - focused on core areas
+    st.markdown("### Management Areas")
     
     col1, col2 = st.columns(2)
     
     with col1:
-        if st.button("📋 License Details", use_container_width=True, type="primary"):
+        if st.button("License & Features", use_container_width=True, type="primary"):
             st.session_state.current_page = "license_details"
             st.rerun()
-        st.caption("View license information, features, and expiry details")
+        st.caption("View license information and enabled SAP migration features")
         
-        if st.button("📦 Packaging Tools", use_container_width=True):
+        if st.button("Package & Deploy", use_container_width=True):
             st.session_state.current_page = "packaging"
             st.rerun()
-        st.caption("Generate packages, configure security, and deployment settings")
+        st.caption("Generate deployment packages for SAP migration tools")
     
     with col2:
-        if st.button("💳 Billing & Usage", use_container_width=True):
+        if st.button("Billing & Usage", use_container_width=True):
             st.session_state.current_page = "billing"
             st.rerun()
-        st.caption("View billing breakdown, usage analytics, and cost trends")
+        st.caption("View processing costs and credit usage analytics")
         
-        if st.button("⚙️ Configuration", use_container_width=True):
+        if st.button("Subscription Settings", use_container_width=True):
             st.session_state.current_page = "configuration"
             st.rerun()
-        st.caption("Manage subscriptions, users, and system settings")
+        st.caption("Manage plans, users, and renewal settings")
     
-    # Demo information
+    # Migration scope overview - relevant to actual app
     st.markdown("---")
-    st.markdown("### Demo Overview")
-    st.info("""
-    **Welcome to the Licensing & Subscription Management Demo!**
+    st.markdown("### Current Migration Scope")
+    col1, col2, col3 = st.columns(3)
     
-    This platform provides complete enterprise licensing capabilities including:
-    - **License Management** - Track validity, features, and user limits
-    - **Billing Analytics** - Monitor costs, usage trends, and payment processing
-    - **Package Generation** - Create secure, deployable software packages
-    - **Subscription Control** - Manage plans, upgrades, and renewals
-    
-    Click any button above to explore the different management areas.
-    """)
+    with col1:
+        st.info("**Foundation Data**: HRP1000/HRP1001 organizational hierarchy processing")
+    with col2:
+        st.info("**Employee Data**: PA0001/PA0002/PA0006/PA0105 personnel record migration")
+    with col3:
+        st.info("**Payroll Data**: PA0008/PA0014 compensation and benefits processing")
 
 def show_license_details():
-    """Show detailed license information"""
+    """Show license information relevant to SAP migration"""
     licensing_state = st.session_state.licensing_state
     
-    # Back button
     if st.button("← Back to Main", key="back_license"):
         st.session_state.current_page = "main"
         st.rerun()
     
-    st.header("📋 License Details")
+    st.header("License & Feature Details")
     
     col1, col2 = st.columns([1, 2])
     
     with col1:
-        st.subheader("Basic Information")
-        st.write(f"**License Type:** {licensing_state['license_type']}")
-        st.write(f"**Organization:** {licensing_state['organization']}")
-        st.write(f"**Valid Until:** {licensing_state['license_expiry']}")
-        st.write(f"**Max Users:** {licensing_state['max_users']}")
-        st.write(f"**Monthly Credits:** {licensing_state['monthly_credits']:,}")
+        st.subheader("License Information")
+        st.write(f"**Type**: {licensing_state['license_type']}")
+        st.write(f"**Organization**: {licensing_state['organization']}")
+        st.write(f"**Valid Until**: {licensing_state['license_expiry']}")
+        st.write(f"**Max Users**: {licensing_state['max_users']}")
+        st.write(f"**Monthly Credits**: {licensing_state['monthly_credits']:,}")
         
-        # License health check
+        # License validity check
         expiry_date = datetime.strptime(licensing_state['license_expiry'], '%Y-%m-%d')
         days_remaining = (expiry_date - datetime.now()).days
         
         if days_remaining > 30:
-            st.success(f"✅ License expires in {days_remaining} days")
+            st.success(f"License expires in {days_remaining} days")
         elif days_remaining > 0:
-            st.warning(f"⚠️ License expires in {days_remaining} days")
+            st.warning(f"License expires in {days_remaining} days")
         else:
-            st.error("❌ License has expired")
+            st.error("License has expired")
     
     with col2:
-        st.subheader("Enabled Features")
+        st.subheader("Enabled SAP Migration Features")
         
-        # Group features by category
+        # Group by actual app functionality
         feature_categories = {
-            "Core Processing": [
-                "Foundation Data Processing",
-                "Employee Data Management", 
-                "Payroll Data Processing"
+            "SAP Data Processing": [
+                "HRP1000/HRP1001 Processing (Foundation)",
+                "PA0001/PA0002/PA0006/PA0105 Processing (Employee)",
+                "PA0008/PA0014 Processing (Payroll)"
             ],
-            "Advanced Analytics": [
-                "Advanced Analytics",
-                "Custom Reports",
-                "API Access"
+            "Migration Tools": [
+                "Advanced Data Validation",
+                "Migration Analytics", 
+                "Custom Report Generation"
             ],
             "Enterprise Features": [
+                "API Access",
                 "Priority Support",
                 "Audit Trail",
-                "Encrypted Packaging",
+                "Encrypted Package Export",
                 "Multi-tenant Support"
             ]
         }
@@ -194,71 +193,76 @@ def show_license_details():
             st.markdown(f"**{category}:**")
             for feature in features:
                 if feature in licensing_state['features_enabled']:
-                    st.write(f"✅ {feature}")
+                    st.write(f"✓ {feature}")
                 else:
-                    st.write(f"❌ {feature} (Not included)")
+                    st.write(f"✗ {feature} (Not included)")
             st.write("")
 
 def show_billing_usage():
-    """Show billing and usage analytics"""
+    """Show billing relevant to SAP processing"""
     licensing_state = st.session_state.licensing_state
     
-    # Back button
     if st.button("← Back to Main", key="back_billing"):
         st.session_state.current_page = "main"
         st.rerun()
     
-    st.header("💳 Billing & Usage Analytics")
+    st.header("Billing & Processing Usage")
     
-    # Current billing overview
+    # Processing cost breakdown - relevant to actual usage
     col1, col2 = st.columns([2, 1])
     
     with col1:
-        # Billing breakdown chart
         billing_data = {
-            'Service': ['Base Subscription', 'Processing Credits', 'Premium Support', 'API Calls', 'Storage', 'Additional Users'],
-            'Cost': [1200, 850, 300, 75, 25, 150],
-            'Usage': ['100%', '85%', '100%', '45%', '12%', '60%']
+            'Service': [
+                'Base Platform License', 
+                'SAP File Processing Credits', 
+                'Data Validation Services', 
+                'Report Generation',
+                'Storage & Archive',
+                'Support & Maintenance'
+            ],
+            'Monthly Cost': [1200, 850, 300, 150, 50, 200],
+            'Usage': ['100%', '85%', '92%', '65%', '23%', '100%']
         }
         
         df_billing = pd.DataFrame(billing_data)
         
         fig = px.pie(
             df_billing, 
-            values='Cost', 
+            values='Monthly Cost', 
             names='Service',
-            title="Monthly Cost Breakdown",
-            height=400
+            title="Monthly Cost Distribution"
         )
         st.plotly_chart(fig, use_container_width=True)
     
     with col2:
-        st.subheader("Current Bill Summary")
-        st.metric("Monthly Total", f"${licensing_state['monthly_cost']:,.2f}")
-        st.metric("Next Bill Date", "Oct 1, 2024")
-        st.metric("Payment Method", "•••• 4567")
+        st.subheader("Current Period")
+        st.metric("Total Cost", f"${licensing_state['monthly_cost']:,.2f}")
+        st.metric("Next Bill", "Oct 1, 2024")
+        st.metric("Payment", "Auto-Pay Enabled")
         
-        # Usage warnings
+        # Usage alerts based on actual processing
         usage_pct = (licensing_state['used_credits'] / licensing_state['monthly_credits']) * 100
         if usage_pct > 90:
-            st.error("⚠️ Credit limit almost reached!")
+            st.error("Processing credit limit almost reached")
         elif usage_pct > 75:
-            st.warning("⚠️ High credit usage detected")
+            st.warning("High processing usage detected")
         
-        st.dataframe(df_billing[['Service', 'Cost']], use_container_width=True)
+        st.dataframe(df_billing[['Service', 'Monthly Cost']], use_container_width=True)
     
-    # Usage trends
-    st.subheader("Usage Trends")
+    # Processing usage trends
+    st.subheader("SAP Processing Usage Trends")
     
-    # Generate sample usage data
+    # Generate realistic usage data
     dates = pd.date_range(start='2024-07-01', end='2024-09-22', freq='D')
     daily_usage = []
     
     for i, date in enumerate(dates):
-        base_usage = 200 + (i % 30) * 15
-        weekend_factor = 0.6 if date.weekday() >= 5 else 1.0
-        seasonal_factor = 1 + 0.3 * (i / len(dates))
-        usage = int(base_usage * weekend_factor * seasonal_factor)
+        # Simulate realistic SAP processing patterns
+        base_usage = 180 + (i % 20) * 12  # Base processing
+        weekday_factor = 1.0 if date.weekday() < 5 else 0.3  # Lower weekend usage
+        monthly_factor = 1.2 if i % 30 < 5 else 1.0  # Month-end spikes
+        usage = int(base_usage * weekday_factor * monthly_factor)
         daily_usage.append(usage)
     
     df_usage = pd.DataFrame({
@@ -270,7 +274,7 @@ def show_billing_usage():
     col1, col2 = st.columns(2)
     
     with col1:
-        fig = px.line(df_usage, x='Date', y='Credits Used', title="Daily Credit Usage")
+        fig = px.line(df_usage, x='Date', y='Credits Used', title="Daily Processing Credits")
         st.plotly_chart(fig, use_container_width=True)
     
     with col2:
@@ -278,154 +282,165 @@ def show_billing_usage():
         st.plotly_chart(fig, use_container_width=True)
 
 def show_packaging_tools():
-    """Show packaging and deployment tools"""
+    """Show packaging tools for SAP migration deployment"""
     licensing_state = st.session_state.licensing_state
     
-    # Back button
     if st.button("← Back to Main", key="back_packaging"):
         st.session_state.current_page = "main"
         st.rerun()
     
-    st.header("📦 Packaging & Deployment Tools")
+    st.header("Package & Deployment Tools")
     
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("Package Configuration")
+        st.subheader("Migration Suite Components")
         
         package_name = st.text_input("Package Name", value="SAP_Migration_Suite_v2.1")
         
-        include_foundation = st.checkbox("Include Foundation Module", value=True)
-        include_employee = st.checkbox("Include Employee Module", value=True)
-        include_payroll = st.checkbox("Include Payroll Module", value=True)
+        # Actual components from the real app
+        include_foundation = st.checkbox("Foundation Data Module (HRP1000/HRP1001)", value=True)
+        include_employee = st.checkbox("Employee Data Module (PA0001/PA0002/PA0006/PA0105)", value=True)
+        include_payroll = st.checkbox("Payroll Data Module (PA0008/PA0014)", value=True)
         
-        st.subheader("Security Settings")
+        st.subheader("Security & Compliance")
         encrypt_package = st.checkbox("Encrypt Package", value=True)
-        digital_signature = st.checkbox("Add Digital Signature", value=True)
+        digital_signature = st.checkbox("Digital Signature", value=True)
         audit_trail = st.checkbox("Include Audit Trail", value=True)
         
-        encryption_level = st.selectbox("Encryption Level", ["AES-256", "AES-128", "RSA-2048"], index=0)
+        encryption_level = st.selectbox("Encryption", ["AES-256", "AES-128"], index=0)
     
     with col2:
-        st.subheader("Deployment Settings")
+        st.subheader("Deployment Configuration")
         
         deployment_target = st.selectbox(
-            "Deployment Target",
-            ["Cloud (Auto-Update)", "On-Premise", "Hybrid", "Custom"],
-            help="Choose deployment environment"
+            "Target Environment",
+            ["Cloud Deployment", "On-Premise", "Hybrid Cloud", "Customer Infrastructure"]
         )
         
         auto_update = st.checkbox("Enable Auto-Updates", value=True)
-        multi_tenant = st.checkbox("Multi-Tenant Support", value=True)
-        api_enabled = st.checkbox("Enable API Access", value=True)
+        multi_client = st.checkbox("Multi-Client Support", value=True)
+        api_access = st.checkbox("Enable API Access", value=True)
         
-        st.subheader("Package Contents")
+        st.subheader("Package Summary")
         
-        # Calculate package size estimates
-        base_size = 50
-        foundation_size = 25 if include_foundation else 0
-        employee_size = 30 if include_employee else 0
-        payroll_size = 20 if include_payroll else 0
+        # Calculate realistic package sizes
+        base_size = 45
+        foundation_size = 28 if include_foundation else 0
+        employee_size = 32 if include_employee else 0
+        payroll_size = 24 if include_payroll else 0
         total_size = base_size + foundation_size + employee_size + payroll_size
         
-        st.write(f"**Estimated Package Size:** {total_size} MB")
-        st.write(f"**Components:** {sum([include_foundation, include_employee, include_payroll])} modules")
-        st.write(f"**Security Level:** {'High' if encrypt_package else 'Standard'}")
+        st.write(f"**Package Size**: {total_size} MB")
+        st.write(f"**Components**: {sum([include_foundation, include_employee, include_payroll])} SAP modules")
+        st.write(f"**Security**: {'Enterprise' if encrypt_package else 'Standard'}")
     
     st.markdown("---")
     
-    # Package generation buttons
+    # Package generation
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("🎁 Generate Package", type="primary", use_container_width=True):
-            generate_demo_package(package_name, include_foundation, include_employee, include_payroll)
+        if st.button("Generate Package", type="primary", use_container_width=True):
+            generate_migration_package(package_name, include_foundation, include_employee, include_payroll)
     
     with col2:
-        if st.button("📋 Generate Manifest", use_container_width=True):
+        if st.button("Create Manifest", use_container_width=True):
             generate_package_manifest(package_name, licensing_state)
     
     with col3:
-        if st.button("🔍 Validate Package", use_container_width=True):
+        if st.button("Validate Package", use_container_width=True):
             validate_package_integrity()
 
 def show_configuration():
-    """Show configuration and subscription management"""
+    """Show subscription and configuration management"""
     licensing_state = st.session_state.licensing_state
     
-    # Back button
     if st.button("← Back to Main", key="back_config"):
         st.session_state.current_page = "main"
         st.rerun()
     
-    st.header("⚙️ Configuration & Subscription Management")
+    st.header("Subscription & Configuration")
     
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("Subscription Plans")
+        st.subheader("Available Plans")
         
+        # Plans relevant to SAP processing
         plans = {
-            'Starter': {'price': 500, 'credits': 2500, 'users': 5},
-            'Professional': {'price': 1200, 'credits': 6000, 'users': 15},
-            'Enterprise': {'price': 2450, 'credits': 10000, 'users': 25},
-            'Enterprise Plus': {'price': 4500, 'credits': 25000, 'users': 'Unlimited'}
+            'Starter': {
+                'price': 800, 
+                'credits': 5000, 
+                'users': 5,
+                'features': 'Basic SAP file processing, email support'
+            },
+            'Professional': {
+                'price': 1800, 
+                'credits': 12000, 
+                'users': 15,
+                'features': 'Advanced validation, priority support, API access'
+            },
+            'Enterprise': {
+                'price': 3200, 
+                'credits': 25000, 
+                'users': 50,
+                'features': 'Full suite, 24/7 support, custom integrations'
+            },
+            'Enterprise Plus': {
+                'price': 5500, 
+                'credits': 50000, 
+                'users': 'Unlimited',
+                'features': 'White label, on-premise, dedicated support manager'
+            }
         }
         
         current_plan = licensing_state['subscription_tier']
         
         for plan_name, details in plans.items():
             is_current = plan_name == current_plan
-            status = "✅ Current" if is_current else "Available"
+            status = "Current Plan" if is_current else "Available"
             
             with st.expander(f"{plan_name} - ${details['price']}/month ({status})"):
-                st.write(f"**Monthly Credits:** {details['credits']:,}")
-                st.write(f"**Max Users:** {details['users']}")
-                
-                if plan_name == 'Starter':
-                    st.write("**Features:** Basic migration tools, email support")
-                elif plan_name == 'Professional':
-                    st.write("**Features:** Advanced analytics, priority support, API access")
-                elif plan_name == 'Enterprise':
-                    st.write("**Features:** All features, 24/7 support, custom integrations")
-                else:
-                    st.write("**Features:** White label, on-premise, dedicated support")
+                st.write(f"**Monthly Credits**: {details['credits']:,}")
+                st.write(f"**Max Users**: {details['users']}")
+                st.write(f"**Features**: {details['features']}")
                 
                 if not is_current:
                     if st.button(f"Upgrade to {plan_name}", key=f"upgrade_{plan_name}"):
-                        st.success(f"Upgrade request submitted for {plan_name}")
+                        st.success(f"Upgrade request submitted for {plan_name} plan")
     
     with col2:
-        st.subheader("Account Settings")
+        st.subheader("Account Management")
         
-        auto_renewal = st.checkbox("Auto-Renewal Enabled", value=licensing_state['auto_renewal'])
+        auto_renewal = st.checkbox("Auto-Renewal", value=licensing_state['auto_renewal'])
         
-        st.subheader("Notification Preferences")
-        usage_alerts = st.checkbox("Usage threshold alerts", value=True)
+        st.subheader("Notifications")
+        usage_alerts = st.checkbox("Processing usage alerts", value=True)
         billing_reminders = st.checkbox("Billing reminders", value=True)
-        security_updates = st.checkbox("Security update notifications", value=True)
+        system_updates = st.checkbox("System update notifications", value=True)
         
-        st.subheader("Quick Actions")
+        st.subheader("Actions")
         
         col_a, col_b = st.columns(2)
         
         with col_a:
-            if st.button("💳 Update Payment", use_container_width=True):
-                st.info("Redirecting to secure payment portal...")
+            if st.button("Update Payment", use_container_width=True):
+                st.info("Opening secure payment portal...")
             
-            if st.button("📄 Download Invoice", use_container_width=True):
-                st.info("Generating invoice PDF...")
+            if st.button("Download Invoice", use_container_width=True):
+                st.info("Generating current invoice...")
         
         with col_b:
-            if st.button("👥 Manage Users", use_container_width=True):
-                st.info("Opening user management panel...")
+            if st.button("Manage Users", use_container_width=True):
+                st.info("Opening user management...")
             
-            if st.button("📞 Contact Support", use_container_width=True):
-                st.info("Support ticket created. Response within 4 hours.")
+            if st.button("Contact Support", use_container_width=True):
+                st.info("Creating support ticket...")
 
-def generate_demo_package(package_name, include_foundation, include_employee, include_payroll):
-    """Generate a demo package"""
-    with st.spinner("Generating package..."):
+def generate_migration_package(package_name, include_foundation, include_employee, include_payroll):
+    """Generate SAP migration package"""
+    with st.spinner("Generating SAP migration package..."):
         import time
         time.sleep(2)
         
@@ -433,14 +448,19 @@ def generate_demo_package(package_name, include_foundation, include_employee, in
             "package_name": package_name,
             "version": "2.1.0",
             "generated_at": datetime.now().isoformat(),
-            "components": {
-                "foundation_module": include_foundation,
-                "employee_module": include_employee,
-                "payroll_module": include_payroll
+            "sap_modules": {
+                "foundation_hrp1000_hrp1001": include_foundation,
+                "employee_pa0001_pa0002_pa0006_pa0105": include_employee,
+                "payroll_pa0008_pa0014": include_payroll
+            },
+            "migration_scope": {
+                "source_system": "SAP HCM",
+                "target_system": "SuccessFactors",
+                "estimated_records": "1400+ employees"
             },
             "security": {
                 "encrypted": True,
-                "signature": "SHA256:abc123...",
+                "signature": "SHA256:abc123def456...",
                 "encryption_level": "AES-256"
             },
             "license": {
@@ -452,17 +472,17 @@ def generate_demo_package(package_name, include_foundation, include_employee, in
         
         package_json = json.dumps(package_contents, indent=2)
         
-        st.success("✅ Package generated successfully!")
+        st.success("SAP migration package generated successfully")
         
         st.download_button(
-            label="📥 Download Package Manifest",
+            label="Download Package Manifest",
             data=package_json,
             file_name=f"{package_name}_manifest.json",
             mime="application/json"
         )
 
 def generate_package_manifest(package_name, licensing_state):
-    """Generate package manifest"""
+    """Generate deployment manifest"""
     manifest = {
         "package_info": {
             "name": package_name,
@@ -472,19 +492,23 @@ def generate_package_manifest(package_name, licensing_state):
         },
         "system_requirements": {
             "python_version": ">=3.8",
-            "memory": "4GB RAM minimum",
-            "storage": "500MB available space",
-            "dependencies": ["streamlit>=1.28.0", "pandas>=1.5.0", "plotly>=5.0.0"]
+            "memory": "8GB RAM recommended",
+            "storage": "2GB available space",
+            "dependencies": ["streamlit>=1.28.0", "pandas>=2.0.0", "plotly>=5.0.0"]
         },
-        "features": licensing_state['features_enabled'],
-        "checksum": "sha256:demo_checksum_value"
+        "sap_capabilities": [
+            "HRP1000/HRP1001 Processing",
+            "PA0001/PA0002/PA0006/PA0105 Processing", 
+            "PA0008/PA0014 Processing"
+        ],
+        "checksum": "sha256:demo_manifest_checksum"
     }
     
     manifest_json = json.dumps(manifest, indent=2)
     
-    st.success("✅ Manifest generated!")
+    st.success("Package manifest generated")
     st.download_button(
-        label="📥 Download Manifest",
+        label="Download Manifest",
         data=manifest_json,
         file_name=f"{package_name}_manifest.json",
         mime="application/json"
@@ -497,23 +521,23 @@ def validate_package_integrity():
         time.sleep(1.5)
         
         validation_results = {
-            "Digital Signature": "✅ Valid",
-            "Encryption": "✅ AES-256 confirmed", 
-            "Dependencies": "✅ All satisfied",
-            "License": "✅ Valid until 2025-12-31",
-            "Checksum": "✅ Verified",
-            "Module Integrity": "✅ All modules intact"
+            "Digital Signature": "Valid",
+            "Encryption": "AES-256 confirmed",
+            "Dependencies": "All satisfied", 
+            "License": "Valid until 2025-12-31",
+            "Checksum": "Verified",
+            "SAP Modules": "All modules intact"
         }
         
-        st.success("✅ Package validation completed!")
+        st.success("Package validation completed")
         
         for check, result in validation_results.items():
-            st.write(f"**{check}:** {result}")
+            st.write(f"**{check}**: {result}")
 
 def main():
     """Main application function"""
     
-    # Navigation logic
+    # Navigation
     if st.session_state.current_page == "main":
         show_main_page()
     elif st.session_state.current_page == "license_details":
